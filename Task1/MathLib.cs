@@ -7,24 +7,32 @@ using System.Threading.Tasks;
 namespace Task1
 {
     /// <summary>
-    /// Class for finding root of a number
+    /// Class for math operations
     /// </summary>
-    public static class NewtonMethod
+    public static class MathLib
     {
         /// <summary>
         /// Calculation accuracy
         /// </summary>
-        private static readonly double E = 0.0001;
+        private static readonly double E = 0.00001;
 
         /// <summary>
-        /// Finds the root of a number
+        /// Finds the root of a number by Newton method
         /// </summary>
         /// <param name="number">Original number</param>
         /// <param name="power">Power of root</param>
         /// <returns>Result rational number</returns>
-        public static double FindRoot(double number, double power)
+        public static double NewtonMethodRoot(double number, double power)
         {
-            if (!(number < 0 && power % 2 == 0))
+            if (power == 0)
+                return 1;
+
+            if (number == 0 && power != 0)
+                return 0;
+
+            if (number < 0 && power % 2 == 0)
+                throw new ArgumentException("Negative number with even power");
+            else
             {
                 double xPrev = number / 2;
                 double xCurrent = (1 / power) * ((power - 1) * xPrev + number / Math.Pow(xPrev, power - 1));
@@ -34,11 +42,9 @@ namespace Task1
                     xPrev = xCurrent;
                     xCurrent = (1 / power) * ((power - 1) * xPrev + number / Math.Pow(xPrev, power - 1));
                 }
-
-                return xCurrent;
+                
+                return Math.Round(xCurrent, (int)Math.Log10(1/E));
             }
-            else
-                throw new Exception("Negative number with even power");
         }
     }
 }
