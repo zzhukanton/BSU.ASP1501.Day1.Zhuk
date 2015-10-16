@@ -27,6 +27,7 @@ namespace Task1
             if (power == 0)
                 return 1;
 
+
             if (number == 0 && power != 0)
                 return 0;
 
