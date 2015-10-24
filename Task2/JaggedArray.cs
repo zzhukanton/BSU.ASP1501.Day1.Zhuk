@@ -12,117 +12,52 @@ namespace Task2
     public static class JaggedArray
     {
         /// <summary>
-        /// For select sort conditions
+        /// Sorts jagged array with default comparator
         /// </summary>
-        /// <param name="array">One string of jagged array</param>
-        /// <returns>Sum of elements, max element or min element</returns>
-        private delegate int SortingCondition(int[] array);
-
-        /// <summary>
-        /// Sorting method for jagged array
-        /// </summary>
-        /// <param name="array">Sorted array</param>
-        /// <param name="sorting">Way of sorting</param>
-        /// <param name="order">Order of result array</param>
-        public static void SortArrayStrings(int[][] array, SortingWay sorting, Order order)
+        /// <param name="array">Jagged array</param>
+        public static void SortArrayStrings(int[][] array)
         {
-            SortingCondition condition = null;
-
-            switch (sorting)
-            {
-                case SortingWay.Sum:
-                    condition = Sum;
-                    break;
-                case SortingWay.Max:
-                    condition = MaxElement;
-                    break;
-                case SortingWay.Min:
-                    condition = MinElement;
-                    break;
-            }
-
-            if (condition != null)
-            {
-                for (int i = 0; i < array.Length - 1; i++)
-                {
-                    for (int j = 0; j < array.Length - i - 1; j++)
-                    {
-                        if (condition(array[i]) > condition(array[i + 1]))
-                        {
-                            var temp = array[i];
-                            array[i] = array[i + 1];
-                            array[i + 1] = temp;
-                        }
-                    }
-                }
-
-                if (order == Order.Descending)
-                    Invert(array);
-            }
+            if (array == null)
+                throw new ArgumentNullException();
             else
-                throw new Exception("Method of conversion is not defined");
+                SortArrayStrings(array, Comparer<int[]>.Default);
         }
 
         /// <summary>
-        /// Finds sum of all array elements 
+        /// Sorts jagged array with condition in IComparer object
         /// </summary>
-        /// <param name="array">Array</param>
-        /// <returns>Sum of elements</returns>
-        private static int Sum(int[] array)
+        /// <param name="array">Jagged array</param>
+        /// <param name="comparer">Object that implements IComparer</param>
+        public static void SortArrayStrings(int[][] array, IComparer<int[]> comparer)
         {
-            int sum = 0;
+            if (comparer == null)
+                throw new ArgumentNullException("Comparer is null");
 
-            for (int i = 0; i < array.Length; i++)
-                sum += array[i];
-            return sum;
+            if (!(comparer is IComparer<int[]>))
+                throw new ArgumentException("Object don't realize IComparer");
+            else
+                BubbleSort(array, comparer);
         }
 
         /// <summary>
-        /// Finds maximum element in the array
+        /// Sorts jagged array with bubble sort depending on comparer
         /// </summary>
-        /// <param name="array">Array</param>
-        /// <returns>Maximum element</returns>
-        private static int MaxElement(int[] array)
+        /// <param name="array">Jagged array</param>
+        /// <param name="comparer">IComparer object with comparing condition</param>
+        private static void BubbleSort(int[][] array, IComparer<int[]> comparer)
         {
-            int max = array[0];
-            for (int i = 1; i < array.Length; i++)
+            int stringsCount = array.Length;
+
+            while (stringsCount - 1 > 0)
             {
-                if (array[i] > max)
-                    max = array[i];
-            }
-            return max;
-        }
-
-        /// <summary>
-        /// Finds minimum element in the array
-        /// </summary>
-        /// <param name="array">Array</param>
-        /// <returns>Minimum element</returns>
-        private static int MinElement(int[] array)
-        {
-            int min = array[0];
-            for (int i = 1; i < array.Length; i++)
-            {
-                if (array[i] < min)
-                    min = array[i];
-            }
-            return min;
-        }
-
-        /// <summary>
-        /// Inverts array
-        /// </summary>
-        /// <param name="array">Inverted array</param>
-        private static void Invert(int[][] array)
-        {
-            int j = array.Length - 1;
-
-            for (int i = 0; i < array.Length / 2; i++)
-            {
-                int[] buf = array[i];
-                array[i] = array[j];
-                array[j] = buf;
-                j--;
+                for (int i = 0; i < array.Count() - 1; i++)
+                    if (comparer.Compare(array[i], array[i + 1]) > 0)
+                    {
+                        var temp = array[i];
+                        array[i] = array[i + 1];
+                        array[i + 1] = temp;
+                    }
+                stringsCount--;
             }
         }
     }
